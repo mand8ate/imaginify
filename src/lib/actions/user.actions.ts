@@ -6,6 +6,22 @@ import User from "../db/models/user.model";
 import { connectToDatabase } from "../db/mongoose";
 import { handleError } from "../utils";
 
+declare type CreateUserParams = {
+  clerkId: string;
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  photo: string;
+};
+
+declare type UpdateUserParams = {
+  firstName: string;
+  lastName: string;
+  username: string;
+  photo: string;
+};
+
 // CREATE
 export async function createUser(user: CreateUserParams) {
   try {
