@@ -6,25 +6,11 @@ import User from "../db/models/user.model";
 import { connectToDatabase } from "../db/mongoose";
 import { handleError } from "../utils";
 
-declare type CreateUserParams = {
-  clerkId: string;
-  email: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  photo: string;
-};
-
-declare type UpdateUserParams = {
-  firstName: string;
-  lastName: string;
-  username: string;
-  photo: string;
-};
-
+// CREATE
 export async function createUser(user: CreateUserParams) {
   try {
     await connectToDatabase();
+    console.log("connected");
 
     const newUser = await User.create(user);
 
@@ -34,6 +20,7 @@ export async function createUser(user: CreateUserParams) {
   }
 }
 
+// READ
 export async function getUserById(userId: string) {
   try {
     await connectToDatabase();
@@ -48,6 +35,7 @@ export async function getUserById(userId: string) {
   }
 }
 
+// UPDATE
 export async function updateUser(clerkId: string, user: UpdateUserParams) {
   try {
     await connectToDatabase();
@@ -81,6 +69,25 @@ export async function deleteUser(clerkId: string) {
     revalidatePath("/");
 
     return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) : null;
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+// USE CREDITS
+export async function updateCredits(userId: string, creditFee: number) {
+  try {
+    await connectToDatabase();
+
+    const updatedUserCredits = await User.findOneAndUpdate(
+      { _id: userId },
+      { $inc: { creditBalance: creditFee } },
+      { new: true }
+    );
+
+    if (!updatedUserCredits) throw new Error("User credits update failed");
+
+    return JSON.parse(JSON.stringify(updatedUserCredits));
   } catch (error) {
     handleError(error);
   }
